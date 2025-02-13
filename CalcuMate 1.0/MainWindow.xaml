@@ -1,0 +1,233 @@
+﻿<Window x:Class="CalcuMate_1._0.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CalcuMate_1._0"
+        mc:Ignorable="d"
+        Title="CalcuMate" 
+        Height="460" 
+        Width="385" 
+        FontFamily="Segoe UI" 
+        WindowStartupLocation="CenterScreen"
+        Background="#2E2E2E" FontSize="17.333">
+
+    <Window.Resources>
+        
+        <!--Estilos-->
+        <Style x:Key="RoutedAndButtonsStyles" TargetType="Button">
+            <Setter Property="Background" Value="#4e4e4e"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="Height" Value="47.0"/>
+            <Setter Property="Width" Value="47.0"/>
+            <Setter Property="Margin" Value="1.7"/>
+            <EventSetter Event="PreviewMouseDown" Handler="Button_PreviewMouseDown"/>
+            <EventSetter Event="PreviewMouseUp" Handler="Button_PreviewMouseUp"/>
+            <EventSetter Event="MouseLeave" Handler="Button_MouseLeave"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                             BorderBrush="{TemplateBinding BorderBrush}" 
+                             BorderThickness="0"
+                             CornerRadius="17">
+                            <ContentPresenter HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="AditionalButtonsStyles" TargetType="Button">
+            <Setter Property="Background" Value="#4e4e4e"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="Height" Value="47.0"/>
+            <Setter Property="Width" Value="47.0"/>
+            <Setter Property="Margin" Value="1.7"/>
+            <EventSetter Event="PreviewMouseDown" Handler="AditionalButton_PreviewMouseDown"/>
+            <EventSetter Event="PreviewMouseUp" Handler="AditionalButton_PreviewMouseUp"/>
+            <EventSetter Event="MouseLeave" Handler="AditionalButton_MouseLeave"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                      BorderBrush="{TemplateBinding BorderBrush}" 
+                      BorderThickness="0"
+                      CornerRadius="17">
+                            <ContentPresenter HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Margin="5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="OperatorButtonStyles" TargetType="Button">
+            <Setter Property="Background" Value="#ff4500"/>
+            <Setter Property="Foreground" Value="#ffffff"/>
+            <Setter Property="Height" Value="40.0"/>
+            <Setter Property="Width" Value="40.0"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="Margin" Value="1.7"/>
+            <EventSetter Event="PreviewMouseDown" Handler="OperatorButton_PreviewMouseDown"/>
+            <EventSetter Event="PreviewMouseUp" Handler="OperatorButton_PreviewMouseUp"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                     BorderBrush="{TemplateBinding BorderBrush}" 
+                     BorderThickness="0"
+                     CornerRadius="17">
+                            <ContentPresenter HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Margin="5"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="NoHoverButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#4E4E4E"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#000000"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="17">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding Content}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!-- Sem Trigger para IsMouseOver -->
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
+
+    <Canvas>
+
+        <Border BorderBrush="#000000" CornerRadius="20" BorderThickness="1" Margin="10" Padding="8">
+            <TextBox x:Name="tbAreaExibicao"
+          Text="O que vamos calcular?"
+          Background="#2e2e2e"
+          Foreground="#00ff00"
+          TextAlignment="left" 
+          FontSize="15pt"
+          Padding="1, -5"
+          VerticalContentAlignment="Top" 
+          HorizontalAlignment="Left"  
+          Width="318" 
+          Height="110"
+          BorderThickness="0" 
+          GotFocus="tbAreaExibicao_GotFocus" 
+          LostFocus="tbAreaExibicao_LostFocus"
+          TextChanged="tbAreaExibicao_TextChanged"/>
+        </Border>
+
+        <Image x:Name="imgLedRed" 
+               Height="10" 
+               Canvas.Left="350" 
+               Canvas.Top="35" 
+               Width="19" 
+               Source="/assets/led_red_off.png" 
+               StretchDirection="UpOnly" 
+               Stretch="Fill" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Top"/>
+        <Image x:Name="imgLedYellow" Height="10" Canvas.Left="350" Canvas.Top="65" Width="19" StretchDirection="UpOnly" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Top" Source="assets/led_yellow_off.png"/>
+        <Image x:Name="imgLedGrren" Height="10" Canvas.Left="350" Canvas.Top="95" Width="19" StretchDirection="UpOnly" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Top" Source="assets/led_green_off.png"/>
+
+        <WrapPanel Canvas.Top="198" Canvas.Left="145" HorizontalAlignment="Left" VerticalAlignment="Center" Width="153" Height="217">
+            <Button x:Name="btnNum1" Content="1" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum2" Content="2" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum3" Content="3" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum4" Content="4" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum5" Content="5" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum6" Content="6" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum7" Content="7" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum8" Content="8" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnNum9" Content="9" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnCE" Content="CE" Background="#32cd32" Style="{StaticResource AditionalButtonsStyles}"/>
+            <Button x:Name="btnNum0" Content="0" Style="{StaticResource RoutedAndButtonsStyles}"/>
+            <Button x:Name="btnVirg" Content="," FontSize="22" FontWeight="Bold" Style="{StaticResource RoutedAndButtonsStyles}"/>
+
+        </WrapPanel>
+
+        <Button Canvas.Right="20" Canvas.Top="199" x:Name="btnBackSpace" Content="--" FontSize="30" Width="45" Height="50" Background="#32cd32" Style="{StaticResource AditionalButtonsStyles}"
+                Click="btnBackSpace_Click"/>
+        <Button Canvas.Right="20" Canvas.Top="262" x:Name="btnClean" Content="C" FontSize="25" Width="45" Height="50" Background="#32cd32" Style="{StaticResource AditionalButtonsStyles}"
+                Click="btnClean_Click"/>
+
+            <Button x:Name="btnIgual" Canvas.Right="15" Canvas.Top="327" Content="=" FontSize="35" Width="55" Height="72" Background="#ff4500" Foreground="#ffffff" BorderThickness="0" Style="{StaticResource NoHoverButtonStyle}"
+                    PreviewMouseDown="btnIgual_PreviewMouseDown" PreviewMouseUp="btnIgual_PreviewMouseUp" MouseLeave="btnIgual_MouseLeave"/>
+
+            <Border x:Name="borderMenuOp" Canvas.Bottom="240" Canvas.Left="5" CornerRadius="25" BorderThickness="1" Background="#1e90ff" Padding="7">
+            <Button x:Name="btnMenuOperadores" Content="+/-" Foreground="#ffffff" FontSize="17" Width="25" Height="25" Background="#1e90ff" BorderThickness="0" 
+                    RenderTransformOrigin="0.5,0.5" Click="btnMenuOperadores_Click" MouseEnter="btnMenuOperadores_MouseEnter" MouseLeave="btnMenuOperadores_MouseLeave" Style="{StaticResource NoHoverButtonStyle}">
+                <Button.RenderTransform>
+                    <RotateTransform x:Name="rotateTransform" Angle="0"/>
+                </Button.RenderTransform>
+            </Button>
+        </Border>
+
+        <Border x:Name="borderWpOperadores" Canvas.Bottom="137" Canvas.Left="20" Width="101" Height="101" CornerRadius="17" BorderThickness="1" Background="#1e90ff" Padding="5">
+            <WrapPanel x:Name="wPainelOperadores" Background="#1e90ff">
+
+                <WrapPanel x:Name="wpAritmetica">
+                    <!-- Menu 1 -->
+                    <Button x:Name="btnOpdMais" Content="+" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMenos" Content="-" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMult" Content="X" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdDiv" Content="/" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+                <WrapPanel x:Name="wpTrigonometria" Visibility="Collapsed">
+                    <!-- Menu 2 -->
+                    <Button x:Name="btnSeno" Content="seno" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnCosseno" Content="Cos" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnTangente" Content="Tag" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+                <WrapPanel x:Name="wpEquações" Visibility="Collapsed">
+                    <!-- Menu 3 -->
+                    <Button x:Name="btnOpdIgualdade" Content="=" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdDesigualdade" Content="!=" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMaior" Content=">" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMenor" Content="menor" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMaiorOuIgual" Content=">=" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnOpdMenorOuIgual" Content="m=" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+                <WrapPanel x:Name="wpLogaritmosEExponênciação" Visibility="Collapsed">
+                    <!-- Menu 4 -->
+                    <Button x:Name="btnLogNatural" Content="ln" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnLog10" Content="log" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnExponencial" Content="exp" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+                <WrapPanel x:Name="wpRaizesEPotencias" Visibility="Collapsed">
+                    <!-- Menu 5 -->
+                    <Button x:Name="btnRaizQuad" Content="Raíz" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnPotencia" Content="^" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+                <WrapPanel x:Name="wpConversoesDeUnidades" Visibility="Collapsed">
+                    <!-- Menu 6 -->
+                    <Button x:Name="btnComprimento" Content="Comprimento" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnPeso" Content="Peso" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnTemperatura" Content="Temperatura" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnVelocidade" Content="Velocidade" Style="{StaticResource OperatorButtonStyles}"/>
+                    <Button x:Name="btnTempo" Content="Tempo" Style="{StaticResource OperatorButtonStyles}"/>
+                </WrapPanel>
+            </WrapPanel>
+        </Border>
+
+
+
+
+
+    </Canvas>
+</Window>
