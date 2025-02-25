@@ -11,6 +11,7 @@ namespace CalcuMate_1._0
         //Avaliar Expressão com NCalc
         public double EvalueteExpression(string expression)
         {
+            
             var e = new Expression(expression);
             return Convert.ToDouble(e.Evaluate());
         }
@@ -45,6 +46,6 @@ namespace CalcuMate_1._0
         }
 
         //Precessar entrada de usuário e decidir qual método chamar
-
+        
     }
 }
