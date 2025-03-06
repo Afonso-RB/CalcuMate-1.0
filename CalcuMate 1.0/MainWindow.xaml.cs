@@ -13,10 +13,16 @@ namespace CalcuMate_1._0
     /// </summary>
     public partial class MainWindow : Window
     {
+        //Classe que faz a solicitação à API do Wolfram Alpha
+        private WolframAlphaClient wolframAlphaClient = new WolframAlphaClient();
+
+
         private double currentAngle = 0;
         private int menu = 1;
         private bool readyToRun = false;
         private bool canRun = true;
+
+        //
         public MainWindow()
         {
             InitializeComponent();
@@ -94,8 +100,12 @@ namespace CalcuMate_1._0
         }
 
         //Botão de Igual
-        private void btnIgual_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void btnIgual_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            string input = "2 + 2";
+            string result = await wolframAlphaClient.QueryWolframAlpha(input);
+            tbAreaExibicao.Text = result;
+
             if (e.ChangedButton == MouseButton.Left)
             {
                 Color specialColor = Color.FromRgb(192, 57, 43);
@@ -111,7 +121,6 @@ namespace CalcuMate_1._0
             {
                 MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
             }
-
         }
         private void btnIgual_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
