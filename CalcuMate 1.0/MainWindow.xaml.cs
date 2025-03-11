@@ -13,10 +13,7 @@ namespace CalcuMate_1._0
     /// </summary>
     public partial class MainWindow : Window
     {
-        //Classe que faz a solicitação à API do Wolfram Alpha
-        private WolframAlphaClient wolframAlphaClient = new WolframAlphaClient();
-
-
+        
         private double currentAngle = 0;
         private int menu = 1;
         private bool readyToRun = false;
@@ -102,25 +99,32 @@ namespace CalcuMate_1._0
         //Botão de Igual
         private async void btnIgual_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            string input = "2 + 2";
-            string result = await wolframAlphaClient.QueryWolframAlpha(input);
-            tbAreaExibicao.Text = result;
-
             if (e.ChangedButton == MouseButton.Left)
             {
                 Color specialColor = Color.FromRgb(192, 57, 43);
                 btnIgual.Background = new SolidColorBrush(specialColor);
             }
 
-            try
+            WolframAlphaClient wolframAlphaClient = new WolframAlphaClient();
+            string input = tbAreaExibicao.Text;
+            if (string.IsNullOrWhiteSpace(input))
             {
-                imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_on.png"));
-                imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_off.png"));
+                tbAreaExibicao.Text = "Digite uma expressão!";
+                try
+                {
+                    imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_on.png"));
+                    imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_off.png"));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
-            }
+                string result = await wolframAlphaClient.QueryWolframAlpha(input);
+                tbAreaExibicao.Text = result;
+            }   
         }
         private void btnIgual_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
