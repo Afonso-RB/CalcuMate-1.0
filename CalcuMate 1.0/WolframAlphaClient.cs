@@ -40,7 +40,7 @@ namespace CalcuMate_1._0
                                    .Descendants("plaintext")
                                    .FirstOrDefault()?.Value;
 
-                return result ?? "Nenhum resultado encontrado.";
+                return result ?? "Não consegui compreender.";
 
             }
         }

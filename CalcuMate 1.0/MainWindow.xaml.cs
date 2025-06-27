@@ -122,8 +122,9 @@ namespace CalcuMate_1._0
             }
             else
             {
-                string result = await wolframAlphaClient.QueryWolframAlpha(input);
-                tbAreaExibicao.Text = result;
+                string result = WolframQueryFormatter.ConvertToWolframFriendlyQuery(input);
+                tbAreaExibicao.Text="Convertendo...";
+                tbAreaExibicao.Text = await wolframAlphaClient.QueryWolframAlpha(result);
             }   
         }
         private void btnIgual_PreviewMouseUp(object sender, MouseButtonEventArgs e)
