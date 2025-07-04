@@ -9,75 +9,48 @@ namespace CalcuMate_1._0
 {
     static class WolframQueryFormatter
     {
-        private static readonly Dictionary<string, string> Terms = new()
+        public static string Refine(string input)
         {
-            { "raiz quadrada", "square root" },
-            { "raíz quadrada", "square root" },
-            { "raiz de", "square root of" },
-            { "limite", "limit" },
-            { "derivada", "derivative" },
-            { "integração", "integration" },
-            { "integral de", "integral of" },
-            { "soma", "sum" },
-            { "multiplicação", "multiplication" },
-            { "multiplique", "multiply" },
-            { "divida", "divide" },
-            { "divisão", "division" },
-            { "subtraia", "subtract" },
-            { "subtração", "subtraction" },
-            { "por", "by" },
-            { "de", "of" },
-            { "tende a", "approaches" },
-            { "quando", "when" },
-            { "x tende a", "x→" },
-            { "quanto é", "what is" },
-            { "qual é", "what is" },
-            { "calcule", "calculate" },
-            { "resolva", "solve" },
-            { "encontre", "find" },
-            { "para", "for" },
-            { "logaritmo", "logarithm" },
-            { "logaritmo de", "log of" },
-            { "exponencial de", "exponential of" },
-            { "cos", "cosine" },
-            { "sen", "sine" },
-            { "tangente", "tangent" },
-            { "faça", "" },
-            { "quero", "" },
-            { "me diga", "" },
-            { "por favor", "" },
-            { "o valor de", "" },
-            { "quanto dá", "" },
-            { "qual o valor de", "" },
-            { "qual o resultado de", "" },
-            { "qual é o resultado de", "" },
-            { "qual é o valor de", "" },
-            { "calcula", "" },
-            { "calcular", "" },
-            { "resultado de", "" },
-            { "valor de", "" },
-            { "resultado", "" }
+            if (string.IsNullOrWhiteSpace(input)) return string.Empty;
 
+            string query = input.Trim().ToLower();
 
-    };
-
-        public static string ConvertToWolframFriendlyQuery(string input) 
-        {
-            string processed = input.ToLower().Trim();
-            foreach (var term in Terms)
+            // 1. Remover frases que não afetam o resultado
+            string[] fillerPhrases = new[]
             {
-                processed = Regex.Replace(processed, term.Key, term.Value, RegexOptions.IgnoreCase);
+            "please", "i want", "i would like to", "can you", "show me", "tell me", "what is", "calculate",
+            "give me", "could you", "find", "answer to", "let me know", "i need", "i am looking for", "help me with", "explain", "show me how to"
+        };
+            foreach (var phrase in fillerPhrases)
+            {
+                query = Regex.Replace(query, $@"\b{Regex.Escape(phrase)}\b", "", RegexOptions.IgnoreCase);
             }
-            // Remove palavras de preenchimento
-            processed = Regex.Replace(processed, @"(quero|calcular|calcula|por favor|faça|me diga|qual é|o valor de|quanto dá)", "", RegexOptions.IgnoreCase);
 
-            // Remove múltiplos espaços
-            processed = Regex.Replace(processed, @"\s+", " ").Trim();
+            // 2. Simplificar expressões matemáticas conhecidas
+            query = Regex.Replace(query, @"square root of (\d+)", "sqrt($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"square of (\d+)", "$1^2", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"logarithm of (\d+)", "log($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"natural logarithm of (\d+)", "ln($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"cube root of (\d+)", "cbrt($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(\d+) raised to the power of (\d+)", "$1^$2", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(\d+) to the power of (\d+)", "$1^$2", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"exponential of (\d+)", "exp($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"limit of ([\w\d\s/()+*-^]+?) as x (?:tends to|approaches) infinity", "limit $1 as x→∞", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)sine of ([\w\d]+)", "sin($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)cosine of ([\w\d]+)", "cos($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)tangent of ([\w\d]+)", "tan($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)cotangent of ([\w\d]+)", "cot($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)secant of ([\w\d]+)", "sec($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)cosecant of ([\w\d]+)", "csc($1)", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)factorial of (\d+)", "$1!", RegexOptions.IgnoreCase);
+            query = Regex.Replace(query, @"(?<!\w)pi", "π", RegexOptions.IgnoreCase);
 
-            // Correções específicas
-            processed = processed.Replace("limit", "limit of"); // Ajuste para garantir legibilidade
+            // 3. Padronizar setas e espaços
+            query = query.Replace("->", "→");
+            query = Regex.Replace(query, @"\s+", " ").Trim();
 
-            return processed;
+            return query;
         }
+
     }
 }

@@ -143,7 +143,7 @@
                HorizontalAlignment="Center" 
                VerticalAlignment="Top"/>
         <Image x:Name="imgLedYellow" Height="10" Canvas.Left="350" Canvas.Top="65" Width="19" StretchDirection="UpOnly" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Top" Source="assets/led_yellow_off.png"/>
-        <Image x:Name="imgLedGrren" Height="10" Canvas.Left="350" Canvas.Top="95" Width="19" StretchDirection="UpOnly" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Top" Source="assets/led_green_off.png"/>
+        <Image x:Name="imgLedGreen" Height="10" Canvas.Left="350" Canvas.Top="95" Width="19" StretchDirection="UpOnly" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Top" Source="assets/led_green_off.png"/>
 
         <WrapPanel Canvas.Top="198" Canvas.Left="145" HorizontalAlignment="Left" VerticalAlignment="Center" Width="153" Height="217">
             <Button x:Name="btnNum1" Content="1" Style="{StaticResource RoutedAndButtonsStyles}"/>

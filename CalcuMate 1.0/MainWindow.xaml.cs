@@ -114,6 +114,7 @@ namespace CalcuMate_1._0
                 {
                     imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_on.png"));
                     imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_off.png"));
+                    imgLedGreen.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_green_off.png"));
                 }
                 catch (Exception ex)
                 {
@@ -122,9 +123,39 @@ namespace CalcuMate_1._0
             }
             else
             {
-                string result = WolframQueryFormatter.ConvertToWolframFriendlyQuery(input);
-                tbAreaExibicao.Text="Convertendo...";
-                tbAreaExibicao.Text = await wolframAlphaClient.QueryWolframAlpha(result);
+                string translated = await Translator.TranslateToEnglish(input);
+                tbAreaExibicao.Text = "Convertendo...";
+                string refine = WolframQueryFormatter.Refine(translated);
+                tbAreaExibicao.Text = await wolframAlphaClient.QueryWolframAlpha(refine);
+
+                //Mudar o estado dos LEDs
+                if (tbAreaExibicao.Text == "Não consegui compreender.")
+                {
+                    tbAreaExibicao.Text = "Erro de sintaxe!";
+                    try
+                    {
+                        imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_on.png"));
+                        imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_off.png"));
+                        imgLedGreen.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_green_off.png"));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_off.png"));
+                        imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_off.png"));
+                        imgLedGreen.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_green_on.png"));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Erro ao carregar a imagem: {ex.Message}");
+                    }
+                }
             }   
         }
         private void btnIgual_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -241,6 +272,7 @@ namespace CalcuMate_1._0
                 {
                     imgLedYellow.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_yellow_on.png"));
                     imgLedRed.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_red_off.png"));
+                    imgLedGreen.Source = new BitmapImage(new Uri("pack://application:,,,/assets/led_green_off.png"));
                 }
                 catch (Exception ex)
                 {
