@@ -34,15 +34,64 @@ namespace CalcuMate_1._0
                 response.EnsureSuccessStatusCode();
                 string responseData = await response.Content.ReadAsStringAsync();
 
-                XDocument xml = XDocument.Parse(responseData);
-                string result = xml.Descendants("pod")
-                                   .Where(pod => (string)pod.Attribute("title") == "Result")
-                                   .Descendants("plaintext")
-                                   .FirstOrDefault()?.Value;
+                if (string.IsNullOrWhiteSpace(responseData))
+                    return "A resposta está vazia. Verifique sua conexão ou tente novamente.";
 
-                return result ?? "Não consegui compreender.";
+                try
+                {
+                    var xml = XDocument.Parse(responseData);
+                    var root = xml.Root;
+
+                    // Verifica os atributos do <queryresult>
+                    bool success = root?.Attribute("success")?.Value == "true";
+                    bool error = root?.Attribute("error")?.Value == "true";
+
+                    if (!success)
+                        return "A consulta não foi compreendida. Tente reformular com termos matemáticos mais claros.";
+
+                    if (error)
+                        return "O Wolfram Alpha encontrou um erro interno ao processar sua consulta.";
+
+                    // Tenta encontrar o pod "Result"
+                    var resultPod = xml.Descendants("pod")
+                                       .FirstOrDefault(p => p.Attribute("title")?.Value.ToLower() == "result");
+
+                    if (resultPod == null)
+                    {
+                        // Procura outros pods úteis, como "Solution", "Decimal approximation", etc.
+                        // trecho corrigido
+                        var fallbackPod = xml.Descendants("pod")
+                            .FirstOrDefault(p =>
+                            {
+                                // pega o atributo e normaliza para minúsculas
+                                var title = p.Attribute("title")?.Value?.ToLower();
+                                // só testa Contains se title não for nulo
+                                return title != null
+                                       && (title.Contains("solution") || title.Contains("approximation"));
+                            });
+
+                        var fallbackText = fallbackPod?.Descendants("plaintext").FirstOrDefault()?.Value;
+
+                        if (!string.IsNullOrWhiteSpace(fallbackText))
+                            return fallbackText;
+
+                        return "Nenhum resultado direto foi retornado. Tente simplificar ou detalhar a consulta.";
+                    }
+
+                    string resultText = resultPod.Descendants("plaintext").FirstOrDefault()?.Value;
+
+                    return string.IsNullOrWhiteSpace(resultText)
+                        ? "Resultado não disponível no formato esperado."
+                        : resultText;
+                }
+                catch (Exception ex)
+                {
+                    return $"Erro ao analisar a resposta: {ex.Message}";
+                }
+
 
             }
         }
+
     }
 }

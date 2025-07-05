@@ -9,10 +9,12 @@ namespace CalcuMate_1._0
     static class Translator
     {
         private static readonly HttpClient client = new HttpClient();
-        public static async Task<string> TranslateToEnglish(string portugueseText)
+        public static async Task<string> TranslateToEnglish(string portugueseText, bool reverse)
         {
             string encodedText = Uri.EscapeDataString(portugueseText);
-            string url = $"https://api.mymemory.translated.net/get?q={encodedText}&langpair=pt|en";
+            string url = reverse 
+                ? $"https://api.mymemory.translated.net/get?q={encodedText}&langpair=en|pt" 
+                : $"https://api.mymemory.translated.net/get?q={encodedText}&langpair=pt|en";
 
             var response = await client.GetStringAsync(url);
             using JsonDocument doc = JsonDocument.Parse(response);

@@ -123,7 +123,7 @@ namespace CalcuMate_1._0
             }
             else
             {
-                string translated = await Translator.TranslateToEnglish(input);
+                string translated = await Translator.TranslateToEnglish(input, false);
                 tbAreaExibicao.Text = "Convertendo...";
                 string refine = WolframQueryFormatter.Refine(translated);
                 tbAreaExibicao.Text = await wolframAlphaClient.QueryWolframAlpha(refine);
