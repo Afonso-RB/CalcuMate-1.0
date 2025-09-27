@@ -27,71 +27,87 @@ namespace CalcuMate_1._0
 
         public async Task<string> QueryWolframAlpha(string input)
         {
-            using (var client = new HttpClient())
+            try
             {
-                string url = $"{BaseUrl}?input={Uri.EscapeDataString(input)}&appid={AppId}&format=plaintext";
-                HttpResponseMessage response = await client.GetAsync(url);
-                response.EnsureSuccessStatusCode();
-                string responseData = await response.Content.ReadAsStringAsync();
-
-                if (string.IsNullOrWhiteSpace(responseData))
-                    return "A resposta está vazia. Verifique sua conexão ou tente novamente.";
-
-                try
+                using (var client = new HttpClient())
                 {
-                    var xml = XDocument.Parse(responseData);
-                    var root = xml.Root;
+                    string url = $"{BaseUrl}?input={Uri.EscapeDataString(input)}&appid={AppId}&format=plaintext";
+                    HttpResponseMessage response = await client.GetAsync(url);
+                    response.EnsureSuccessStatusCode();
+                    string responseData = await response.Content.ReadAsStringAsync();
 
-                    // Verifica os atributos do <queryresult>
-                    bool success = root?.Attribute("success")?.Value == "true";
-                    bool error = root?.Attribute("error")?.Value == "true";
+                    //Verifica se a resposta está vazia
+                    if (string.IsNullOrWhiteSpace(responseData))
+                        return "A resposta está vazia. Verifique sua conexão ou tente novamente.";
 
-                    if (!success)
-                        return "A consulta não foi compreendida. Tente reformular com termos matemáticos mais claros.";
-
-                    if (error)
-                        return "O Wolfram Alpha encontrou um erro interno ao processar sua consulta.";
-
-                    // Tenta encontrar o pod "Result"
-                    var resultPod = xml.Descendants("pod")
-                                       .FirstOrDefault(p => p.Attribute("title")?.Value.ToLower() == "result");
-
-                    if (resultPod == null)
+                    //Tratamento da resposta
+                    try
                     {
-                        // Procura outros pods úteis, como "Solution", "Decimal approximation", etc.
-                        // trecho corrigido
-                        var fallbackPod = xml.Descendants("pod")
-                            .FirstOrDefault(p =>
-                            {
-                                // pega o atributo e normaliza para minúsculas
-                                var title = p.Attribute("title")?.Value?.ToLower();
-                                // só testa Contains se title não for nulo
-                                return title != null
-                                       && (title.Contains("solution") || title.Contains("approximation"));
-                            });
+                        var xml = XDocument.Parse(responseData);
+                        var root = xml.Root;
 
-                        var fallbackText = fallbackPod?.Descendants("plaintext").FirstOrDefault()?.Value;
+                        // Verifica os atributos do <queryresult>
+                        bool success = root?.Attribute("success")?.Value == "true";
+                        bool error = root?.Attribute("error")?.Value == "true";
 
-                        if (!string.IsNullOrWhiteSpace(fallbackText))
-                            return fallbackText;
+                        if (!success)
+                            return "A consulta não foi compreendida. Tente reformular com termos matemáticos mais claros.";
 
-                        return "Nenhum resultado direto foi retornado. Tente simplificar ou detalhar a consulta.";
+                        if (error)
+                            return "O Wolfram Alpha encontrou um erro interno ao processar sua consulta.";
+
+                        // Tenta encontrar o pod "Result"
+                        var resultPod = xml.Descendants("pod")
+                                           .FirstOrDefault(p => p.Attribute("title")?.Value.ToLower() == "result");
+
+                        if (resultPod == null)
+                        {
+                            // Procura outros pods úteis, como "Solution", "Decimal approximation", etc.
+                            // trecho corrigido
+                            var fallbackPod = xml.Descendants("pod")
+                                .FirstOrDefault(p =>
+                                {
+                                    // pega o atributo e normaliza para minúsculas
+                                    var title = p.Attribute("title")?.Value?.ToLower();
+                                    // só testa Contains se title não for nulo
+                                    return title != null
+                                           && (title.Contains("solution") || title.Contains("approximation"));
+                                });
+
+                            var fallbackText = fallbackPod?.Descendants("plaintext").FirstOrDefault()?.Value;
+
+                            if (!string.IsNullOrWhiteSpace(fallbackText))
+                                return fallbackText;
+
+                            return "Nenhum resultado direto foi retornado. Tente simplificar ou detalhar a consulta.";
+                        }
+
+                        string resultText = resultPod.Descendants("plaintext").FirstOrDefault()?.Value;
+
+                        return string.IsNullOrWhiteSpace(resultText)
+                            ? "Resultado não disponível no formato esperado."
+                            : resultText;
+                    }
+                    catch (Exception ex)
+                    {
+                        return $"Erro ao analisar a resposta: {ex.Message}";
                     }
 
-                    string resultText = resultPod.Descendants("plaintext").FirstOrDefault()?.Value;
 
-                    return string.IsNullOrWhiteSpace(resultText)
-                        ? "Resultado não disponível no formato esperado."
-                        : resultText;
                 }
-                catch (Exception ex)
-                {
-                    return $"Erro ao analisar a resposta: {ex.Message}";
-                }
-
-
+            }
+            catch (HttpRequestException ex)
+            {
+                return $"[network-error] Falha ao conectar à internet: {ex.Message}";
+            }
+            catch (TaskCanceledException)
+            {
+                return "[network-error] Tempo limite de conexão excedido. Verifique sua rede.";
+            }
+            catch (Exception ex)
+            {
+                return $"[network-error] Erro inesperado: {ex.Message}";
             }
         }
-
     }
 }

@@ -46,12 +46,13 @@ namespace CalcuMate_1._0
         //Botões Numéricos
         private void Button_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            double tbCaretPosition = tbAreaExibicao.CaretIndex;
             if (sender is Button button)
             {
                 Color specialColor = Color.FromRgb(255, 99, 71);
                 button.Background = new SolidColorBrush(specialColor);
 
-                tbAreaExibicao.Text += button.Content;
+                tbAreaExibicao.Text +=button.Content;
             }
         }
 
@@ -126,7 +127,10 @@ namespace CalcuMate_1._0
                 string translated = await Translator.TranslateToEnglish(input, false);
                 tbAreaExibicao.Text = "Convertendo...";
                 string refine = WolframQueryFormatter.Refine(translated);
-                tbAreaExibicao.Text = await wolframAlphaClient.QueryWolframAlpha(refine);
+                //Converte o resultado para Portugues e exibe 
+                string result = await wolframAlphaClient.QueryWolframAlpha(refine);
+                tbAreaExibicao.Text = await Translator.TranslateToEnglish(result, true);
+              
 
                 //Mudar o estado dos LEDs
                 if (tbAreaExibicao.Text == "Não consegui compreender.")
